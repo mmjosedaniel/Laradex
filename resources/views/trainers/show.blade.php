@@ -8,6 +8,14 @@
     <div class="text-center">
         <h5 class="card-title">{{$trainer->name}}</h5>
         <p>{{ $trainer->description }}</p>
+        <a href="/trainers/{{ $trainer->slug }}/edit" class="btn btn-primary">Edit</a>
+
+        <form action="/trainers/{{ $trainer->slug }}" method="post">
+            @method('DELETE')
+            @csrf
+
+            <button class="btn btn-danger">Delete</button>
+        </form>
     </div>
 
 @endsection
