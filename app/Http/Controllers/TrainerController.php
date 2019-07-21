@@ -14,8 +14,9 @@ class TrainerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $request->user()->authorizeRoles(['user', 'admin']);
         $trainers = Trainer::all();
         return view('trainers.index', compact('trainers'));
     }
@@ -52,7 +53,8 @@ class TrainerController extends Controller
         $trainer->description = $request->input('description');
         $trainer->avatar = $name;
         $trainer->save();
-        return 'Saved';
+
+        return redirect()->route('trainers.index');
     }
 
     /**
@@ -84,7 +86,7 @@ class TrainerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Trainer $trainer)
+    public function update(StoreTrainerRequest $request, Trainer $trainer)
     {
         $trainer->fill($request->except('avatar'));
         if ($request->hasFile('avatar')) {
@@ -95,7 +97,7 @@ class TrainerController extends Controller
         }
         $trainer->save();
 
-        return 'Updated';
+        return redirect()->route('trainers.show', [$trainer])->with('status', 'Trainer updated');
     }
 
     /**
@@ -109,6 +111,7 @@ class TrainerController extends Controller
         $file_path = public_path().'/images/'.$trainer->avatar;
         \File::delete($file_path);
         $trainer->delete();
-        return 'Deleted';
+
+        return redirect()->route('trainers.index');
     }
 }
